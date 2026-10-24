@@ -10,7 +10,7 @@ import { checkService } from '../scripts/check-service.mjs';
 test('release inventory verifies actual frozen bytes', async () => {
   const result = await verifyUpstream();
   assert.equal(result.files, 8);
-  assert.equal(result.commit, '2c80b287730f0dd6496520b89fd76debaa6e6b9b');
+  assert.equal(result.commit, '948289670ed43678ea0dcaeafd8ea487bd78a2b0');
 });
 
 test('product root mounts the actual widget and supporter workflows share an immutable kit pin', async () => {
@@ -22,13 +22,14 @@ test('product root mounts the actual widget and supporter workflows share an imm
   assert.match(root, /<svg[^>]+aria-hidden="true"/);
   assert.match(root, /decorative, not a live audio meter/);
   assert.doesNotMatch(root, /autoplay|\.play\(\)/);
-  const pin = '3b2a72f7f8c49fb2af89ea7df2ead8e338e0e870';
+  const pin = 'a0f3bdebcbb5ded8437446797fcba28272af8098';
   for (const name of ['release', 'announce']) {
     const workflow = await readFile(new URL(`../.github/workflows/supporter-${name}.yml`, import.meta.url), 'utf8');
     assert.match(workflow, new RegExp(`uses: TheJollyLaMa/DecentHead/.github/workflows/product-supporter-\\w+\\.yml@${pin}`));
     assert.match(workflow, new RegExp(`head_ref: ${pin}`));
     assert.doesNotMatch(workflow, /PRIVATE_KEY/);
     if (name === 'announce') assert.match(workflow, /SUPPORTER_DISCORD_ENABLED == 'true'/);
+    if (name === 'release') assert.match(workflow, /quantity: '100'/);
   }
 });
 

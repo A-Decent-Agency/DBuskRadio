@@ -154,7 +154,7 @@ server policy; this widget does not pretend browser storage provides it.
 ## Provenance and updating
 
 `upstream.json` freezes **DecentBusking
-`2c80b287730f0dd6496520b89fd76debaa6e6b9b`**, including the source integration and per-recording handoff fix, based on main
+`948289670ed43678ea0dcaeafd8ea487bd78a2b0`**, including preloaded playlist handoffs and continuous between-track polling, based on main
 `045c625f90930263c3f14ca26b520634fe7d76cc`.
 This is a merged source snapshot, not a tagged product release. The runtime modules,
 demo and widget tests are byte-identical to that commit. Upstream
@@ -182,7 +182,7 @@ Every relative module must remain within the same immutable commit.
    pin and its original compact appearance. For each new deployment, verify the
    pin is retrievable; test live audio/codec, actual CORS, next-track handoff and tallies
    on a dedicated browser page. Synthetic tests do not establish live delivery.
-5. Supporter terms are approved: 1,000 editions at 10 USDC, 10% secondary
+5. Supporter terms are approved: 100 editions at 10 USDC, 10% secondary
    royalty, with the personal `thejollylama.eth` wallet handling supporter
    registration/minting, initial editions and royalties. The Agency wallet is
    for ENS only; the proposed Agency NFT-admin grant is withdrawn. The v0.1.0
