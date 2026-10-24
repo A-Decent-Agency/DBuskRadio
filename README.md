@@ -46,12 +46,51 @@ widget.js → widget/radio-widget.js → js/radio-client.mjs
 
 `mount` is a named export from both `widget.js` and `widget/radio-widget.js`.
 Return value: `{ destroy() }`; destroy is idempotent and remount replaces the
-previous instance. Each instance has isolated shadow DOM, scoped styles, local
+previous instance. The default view has isolated shadow DOM, scoped styles, local
 theme/compact settings, stopped-by-default media and its own request lifecycle.
 Inherited CSS variables: `--dbusk-color`, `--dbusk-background`, `--dbusk-border`,
-`--dbusk-accent`. Reduced motion is respected; controls have accessible names,
+`--dbusk-border-width`, `--dbusk-accent`, `--dbusk-padding`, `--dbusk-gap`,
+`--dbusk-radius`, `--dbusk-max-width`. Tokens override all theme modes.
+Stable `::part()` names: `panel`, `brand`, `controls`, `play`, `station`,
+`volume`, `up`, `down`, `net`, `now`, `status`, `settings`, `theme`, `compact`,
+`session`, `audio`. Reduced motion is respected; controls have accessible names,
 keyboard operation and live status/now-playing announcements. The now-playing
 line is horizontally scrollable/focusable without forced motion.
+
+### Host-owned rendering (no product chrome)
+
+Pass `render({ element, document, controls, stations, selectStation })` to opt
+out of the default view. Move the provided native controls into the host's
+light-DOM markup; the engine keeps all playback, polling, proxy/seek, voting,
+rollback/deduplication and identity logic. `controls` uses the part names above.
+Do not clone controls, remove their engine listeners or detach `controls.audio`.
+Keep accessible control names/focus; optional settings/votes/now-playing may
+live inside a discoverable host disclosure. No default styles enter the host.
+
+Return optional `{ update({ station, listening, now, status }), destroy() }`.
+`update` runs after engine controls update, including asynchronous status/vote
+changes. `destroy` removes your listeners; the engine handles its listeners,
+media/requests, subscriptions and DOM removal. Remount is supported, including
+switching between default/custom views (an existing shadow uses a slot bridge).
+`selectStation(id, { play: true })` starts only after your user gesture;
+otherwise it preserves the paused/listening state. Invalid IDs and calls after
+destroy are ignored.
+
+```js
+mount(host, {
+  render({ element, document, controls }) {
+    const row = document.createElement('nav');
+    row.setAttribute('aria-label', 'Radio');
+    row.append(controls.play, controls.station, controls.volume);
+    const details = document.createElement('details');
+    const summary = document.createElement('summary');
+    summary.textContent = 'Radio details and voting';
+    details.append(summary, controls.now, controls.up, controls.down,
+      controls.net, controls.status, controls.session);
+    element.replaceChildren(row, details, controls.audio);
+  },
+});
+```
 
 Options may inject `head` for tests; otherwise the widget reuses
 `window.DecentHead`, including a late `decenthead:ready` event. It reads
@@ -102,7 +141,7 @@ server policy; this widget does not pretend browser storage provides it.
 ## Provenance and updating
 
 `upstream.json` freezes **DecentBusking
-`cd471942b10733431b8bde463235143f6cc6e2ca`**, based on main
+`da5d998ee3c5fcd4a5a739afd35b5ca091f14e8b`**, based on main
 `045c625f90930263c3f14ca26b520634fe7d76cc`.
 This is an unmerged PR-source snapshot, not a release. The runtime modules,
 demo and widget tests are byte-identical to that commit. Upstream
@@ -110,7 +149,7 @@ demo and widget tests are byte-identical to that commit. Upstream
 and media URL helpers, avoiding an independent fork of the client protocol.
 Its archive, fade, buffering and Discord takeover player remains separate and
 unchanged. Update shared behavior upstream first, then synchronize the complete
-closure and `upstream.json` in one reviewed product PR; never patch a product
+closure and `upstream.json` (including per-file SHA-256 inventory) in one reviewed product PR; never patch a product
 copy silently or import a mutable upstream branch.
 
 For remote embeds, use this product's **full pushed commit SHA** in an ESM-capable
