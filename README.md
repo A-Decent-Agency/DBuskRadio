@@ -14,11 +14,13 @@ wallet-signature gates. Release/mint preparation is not proof of publication.
 ```sh
 git clone https://github.com/A-Decent-Agency/DBuskRadio.git
 cd DBuskRadio
-# Review-stage branch until its PR is merged:
-git checkout feat/standalone-dbusk-radio
 node --test test/*.test.mjs
+node scripts/verify-upstream.mjs
 python3 -m http.server 8080
 ```
+
+The default branch contains the merged product. For production, check out an
+actual reviewed release tag or full commit rather than tracking a moving branch.
 
 Open `http://localhost:8080/widget.html`. Static HTTP is necessary for ES modules;
 `file:` pages are not supported. A network/CORS error is reported, not silently
@@ -130,7 +132,9 @@ signed/admin/upload permissions. Defaults cover:
 
 IPFS subdomain gateways and other ENS gateways require their actual exact
 origin to be added by an operator; no arbitrary wildcard or `null` origin.
-No worker configuration has been applied or service restarted by this PR.
+The reference worker rollout has been verified for the Agency Pages radio
+preflight, public state/history and actual ranged media bytes. Other operators
+must configure and verify their own exact origins.
 
 The vote preflight advertises `GET, POST, OPTIONS` and headers
 `content-type, range`; the actual write route is `POST /api/radio/vote`.
@@ -164,20 +168,22 @@ Every relative module must remain within the same immutable commit.
 
 ## Production and unsigned release gates
 
-1. Review/merge the upstream extraction + radio-only CORS source PR.
-2. An authorized operator separately deploys the worker, verifies actual Canopy,
+1. The upstream extraction, radio-only CORS and per-recording handoff fix are
+   merged; the runtime freeze above records their exact source.
+2. An authorized operator deploys their worker, verifies actual Canopy,
    ENS and IPFS origins, public media/ranges, and radio-only vote preflight.
-3. Review the product provenance/closure and merge this PR without rewriting its
-   pinned commit out of reach. Product source is runnable but **unreleased**.
-4. Review/merge Canopy only after its pinned product commit is publicly
-   retrievable; test live audio/codec, actual CORS, next-track handoff and tallies
+3. The product provenance/closure has been checked and merged without rewriting
+   its pinned commits. Until a published release exists, use an exact commit.
+4. Canopy's host adapter is merged with a publicly retrievable immutable product
+   pin and its original compact appearance. For each new deployment, verify the
+   pin is retrievable; test live audio/codec, actual CORS, next-track handoff and tallies
    on a dedicated browser page. Synthetic tests do not establish live delivery.
-5. ENS/controller ownership, resolved contenthash/IPFS deployment, supporter
-   terms/supply/permissions and wallet actions need separate human approval.
-   Prepare unsigned records only: display ENS `DBusk.decentagency.eth`;
-   no contenthash/CID is invented here. No supporter has been minted, listed,
-   transferred or charged; no tag/release, ENS write, credential pin,
-   announcement, production restart or secret-bearing bot run occurred.
+5. Supporter terms are approved: 1,000 editions at 10 USDC, 10% secondary
+   royalty, with the Agency as intended mint/royalty recipient. Authority,
+   actual pins, primary-sale routing and wallet signatures remain gates.
+   Display ENS is `DBusk.decentagency.eth`; no contenthash/CID is invented here.
+   No supporter has been minted, listed, transferred or charged, and no ENS
+   write or supporter announcement has been performed.
 
 Code: Apache-2.0. Upstream notices and CC-BY-4.0 license for original non-code
 content are preserved in `NOTICE`, `LICENSE`, and `LICENSES/`.
