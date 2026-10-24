@@ -1,7 +1,7 @@
 {
   "repository": "https://github.com/TheJollyLaMa/DecentBusking",
-  "baseCommit": "045c625",
-  "freezeCommit": "6c1207ca451a6d908b18cba64d020ec1e90a9760",
+  "baseCommit": "045c625f90930263c3f14ca26b520634fe7d76cc",
+  "freezeCommit": "cd471942b10733431b8bde463235143f6cc6e2ca",
   "branch": "feat/standalone-dbusk-radio",
   "issue": "https://github.com/TheJollyLaMa/DecentBusking/issues/247",
   "status": "Unmerged upstream PR snapshot, not a tagged release",

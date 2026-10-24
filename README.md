@@ -102,7 +102,8 @@ server policy; this widget does not pretend browser storage provides it.
 ## Provenance and updating
 
 `upstream.json` freezes **DecentBusking
-`6c1207ca451a6d908b18cba64d020ec1e90a9760`**, based on main `045c625`.
+`cd471942b10733431b8bde463235143f6cc6e2ca`**, based on main
+`045c625f90930263c3f14ca26b520634fe7d76cc`.
 This is an unmerged PR-source snapshot, not a release. The runtime modules,
 demo and widget tests are byte-identical to that commit. Upstream
 `js/radio-sync.js` uses the same `radio-client.mjs` transport, listener identity
