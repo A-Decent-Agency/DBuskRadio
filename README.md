@@ -4,6 +4,11 @@
 from [DecentBusking #247](https://github.com/TheJollyLaMa/DecentBusking/issues/247).
 No bundler, dependencies, iframe, wallet connection or automatic playback.
 
+See [deployment paths](docs/DEPLOYMENT.md) for hosted-service onboarding,
+independent worker setup and the non-writing service check, and
+[supporter release](docs/SUPPORTER-RELEASE.md) for the approved terms and
+wallet-signature gates. Release/mint preparation is not proof of publication.
+
 ## Clone and try
 
 ```sh
