@@ -1,10 +1,14 @@
 import {
   radioEndpoint, radioMediaUrl, readRadioState, sendRadioVote,
   radioListenerId, readRadioVotes, saveRadioVotes, readRadioNet, radioShowLabel,
+  readRadioMediaBlob,
 } from '../js/radio-client.mjs';
 
 const mounted = new WeakMap();
 const DEFAULT_WORKER = 'https://decentbusking.onrender.com';
+// Mirrors js/radio-sync.js: after a song ends, wait up to five minutes for the next song and start it from 0:00.
+const HANDOFF_WINDOW_MS = 5 * 60_000;
+const CONTINUOUS_START_MAX_S = 45;
 const CSS = `
 :host{display:block;color:var(--dbusk-color,#eee);font:13px/1.4 system-ui,sans-serif}
 .radio{background:var(--dbusk-background,#172321);border:var(--dbusk-border-width,1px) solid var(--dbusk-border,#638579);border-radius:var(--dbusk-radius,12px);padding:var(--dbusk-padding,12px);max-width:var(--dbusk-max-width,560px);box-sizing:border-box}
@@ -64,6 +68,7 @@ export function mount(element, options = {}) {
   const compact = node('button', 'Compact', { type: 'button', 'aria-pressed': panel.dataset.compact });
   const session = node('span', 'Guest listener');
   const audio = node('audio', '', { preload: 'none' });
+  audio.crossOrigin = 'anonymous';
   audio.volume = Number.isFinite(options.volume) ? Math.max(0, Math.min(1, options.volume)) : 0.5;
   volume.value = String(audio.volume);
   controls.append(play, stationInput, volume, up, down, netLabel);
@@ -82,6 +87,8 @@ export function mount(element, options = {}) {
   let destroyed = false, listening = false, reachable = false, playable = false;
   let state = null, track = null, loaded = null, net = null, pending = false, optimistic = null;
   let generation = 0, mediaGeneration = 0, timer = null, metadata = null, offWallet = null, head = null, polling = false;
+  let preload = null, activeBlob = null, endedPlayId = null, endedAt = 0;
+  const objectUrls = window.URL || globalThis.URL;
   const requests = new Set(), cleanups = [];
   let view = null;
   const on = (target, event, handler) => {
@@ -119,6 +126,35 @@ export function mount(element, options = {}) {
     audio.pause();
     audio.removeAttribute('src');
     audio.load();
+    if (activeBlob) objectUrls.revokeObjectURL(activeBlob);
+    activeBlob = null;
+  }
+  function discardPreload() {
+    if (!preload) return;
+    preload.controller.abort();
+    if (preload.blobUrl) objectUrls.revokeObjectURL(preload.blobUrl);
+    preload = null;
+  }
+  function warmNext(target) {
+    const connection = window.navigator?.connection;
+    const cid = target?.ipfsCid;
+    if (!listening || station.id !== 'dbusk' || connection?.saveData ||
+        /(^|-)2g$/.test(connection?.effectiveType || '') || !objectUrls?.createObjectURL ||
+        !radioMediaUrl(radioUrl, cid)) {
+      discardPreload();
+      return;
+    }
+    if (preload?.cid === cid) return;
+    discardPreload();
+    const entry = { cid, controller: new AbortController(), blobUrl: null };
+    preload = entry;
+    const timeout = setTimeout(() => entry.controller.abort(), 30_000);
+    entry.done = readRadioMediaBlob({ url: radioMediaUrl(radioUrl, cid), fetchImpl,
+      signal: entry.controller.signal, mime: target.mediaType || '' }).then(blob => {
+      if (preload === entry) entry.blobUrl = objectUrls.createObjectURL(blob);
+    }).catch(error => {
+      if (preload === entry) console.warn('[radio-widget] Next recording preload unavailable:', error.message);
+    }).finally(() => clearTimeout(timeout));
   }
   function cancel() {
     generation++;
@@ -128,10 +164,12 @@ export function mount(element, options = {}) {
     polling = false;
     pending = false;
     optimistic = null;
+    discardPreload();
   }
   function failure(error, current) {
     if (destroyed || current !== generation) return;
     listening = false;
+    discardPreload();
     clearAudio();
     status.textContent = error?.name === 'NotAllowedError' ? 'Autoplay blocked · press Play to listen' : 'Media unavailable · press Play to retry';
     render();
@@ -159,6 +197,11 @@ export function mount(element, options = {}) {
       if (destroyed || current !== generation) return;
       state = snapshot;
       reachable = true;
+      if (listening && loaded && !audio.paused && !audio.ended && snapshot.playback?.status !== 'paused' &&
+          track?.playId !== snapshot.nowPlaying?.playId) {
+        warmNext(snapshot.nowPlaying || snapshot.upNext);
+        return;
+      }
       const previous = track?.playId;
       track = snapshot.nowPlaying;
       if (previous !== track?.playId) { net = null; status.textContent = ''; }
@@ -172,14 +215,24 @@ export function mount(element, options = {}) {
         if (track) status.textContent = 'Track not available on IPFS yet';
       } else if (listening) {
         const id = `${track.playId || track.trackId || media}:${media}`;
-        if (loaded !== id) {
+        if (loaded !== id && track.playId !== endedPlayId) {
+          const entry = preload?.cid === track.ipfsCid ? preload : null;
+          if (entry) await entry.done;
+          if (destroyed || current !== generation) return;
           clearAudio();
+          activeBlob = entry?.blobUrl || null;
+          if (entry) preload = null;
           loaded = id;
-          metadata = { current, id, position: Number(track.positionMs) / 1000 || 0, received: Date.now() };
-          audio.src = media;
+          const position = Number(track.positionMs) / 1000 || 0;
+          // A listener who heard the last song to its end starts the next one at 0:00, like the main site.
+          const continuing = endedPlayId !== null && Date.now() - endedAt <= HANDOFF_WINDOW_MS && position <= CONTINUOUS_START_MAX_S;
+          endedPlayId = null;
+          metadata = continuing ? null : { current, id, position, received: Date.now() };
+          audio.src = activeBlob || media;
           void startAudio(current);
         } else if (audio.ended) status.textContent = 'Waiting for the next track';
       }
+      warmNext(snapshot.upNext);
       render();
       if (!pending && track?.playId) {
         const playId = track.playId;
@@ -197,7 +250,11 @@ export function mount(element, options = {}) {
       now.textContent = 'DBusk radio unavailable · retrying';
       status.textContent = 'Network/CORS or Discord cooldown · playback and voting unavailable';
     } finally {
-      if (!destroyed && current === generation) { polling = false; render(); schedule(current); }
+      if (!destroyed && current === generation) {
+        polling = false;
+        render();
+        schedule(current, listening && audio.ended && endedPlayId !== null && Date.now() - endedAt <= HANDOFF_WINDOW_MS ? 750 : 8000);
+      }
     }
   }
   async function vote(value) {
@@ -233,9 +290,15 @@ export function mount(element, options = {}) {
     clearAudio();
     track = null;
     net = null;
+    endedPlayId = null;
     status.textContent = '';
-    if (station.id === 'dbusk') { now.textContent = 'Tuning in to DBusk…'; void poll(generation); }
+    if (station.id === 'dbusk') {
+      audio.crossOrigin = 'anonymous';
+      now.textContent = 'Tuning in to DBusk…';
+      void poll(generation);
+    }
     else {
+      audio.removeAttribute('crossorigin');
       now.textContent = `${station.label || station.id} · live stream`;
       if (listening) { audio.src = station.url; void startAudio(generation); }
     }
@@ -289,6 +352,8 @@ export function mount(element, options = {}) {
   });
   on(audio, 'ended', () => {
     playable = false;
+    endedPlayId = track?.playId ?? null;
+    endedAt = Date.now();
     if (station.id === 'dbusk') { status.textContent = 'Waiting for the next track'; schedule(generation, 750); render(); }
     else failure(new Error('Live stream ended'), generation);
   });
