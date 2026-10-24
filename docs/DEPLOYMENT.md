@@ -49,7 +49,7 @@ containing it if deploying the whole application.
 ```sh
 git clone https://github.com/TheJollyLaMa/DecentBusking.git
 cd DecentBusking
-git checkout da5d998ee3c5fcd4a5a739afd35b5ca091f14e8b
+git checkout 2c80b287730f0dd6496520b89fd76debaa6e6b9b
 cd discord-bot
 npm ci
 cp .env.example .env

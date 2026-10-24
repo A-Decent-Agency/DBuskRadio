@@ -146,9 +146,9 @@ server policy; this widget does not pretend browser storage provides it.
 ## Provenance and updating
 
 `upstream.json` freezes **DecentBusking
-`da5d998ee3c5fcd4a5a739afd35b5ca091f14e8b`**, based on main
+`2c80b287730f0dd6496520b89fd76debaa6e6b9b`**, including the source integration and per-recording handoff fix, based on main
 `045c625f90930263c3f14ca26b520634fe7d76cc`.
-This is an unmerged PR-source snapshot, not a release. The runtime modules,
+This is a merged source snapshot, not a tagged product release. The runtime modules,
 demo and widget tests are byte-identical to that commit. Upstream
 `js/radio-sync.js` uses the same `radio-client.mjs` transport, listener identity
 and media URL helpers, avoiding an independent fork of the client protocol.

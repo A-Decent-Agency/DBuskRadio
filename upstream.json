@@ -1,10 +1,10 @@
 {
   "repository": "https://github.com/TheJollyLaMa/DecentBusking",
   "baseCommit": "045c625f90930263c3f14ca26b520634fe7d76cc",
-  "freezeCommit": "da5d998ee3c5fcd4a5a739afd35b5ca091f14e8b",
-  "branch": "feat/standalone-dbusk-radio",
+  "freezeCommit": "2c80b287730f0dd6496520b89fd76debaa6e6b9b",
+  "branch": "fix/radio-resource-handoff",
   "issue": "https://github.com/TheJollyLaMa/DecentBusking/issues/247",
-  "status": "Unmerged upstream PR snapshot, not a tagged release",
+  "status": "Merged upstream source snapshot; product release not yet tagged",
   "files": [
     "widget.js",
     "widget/radio-widget.js",
@@ -17,10 +17,10 @@
   ],
   "sha256": {
     "widget.js": "cdaceb888caf8be190df356894c5a8e0490bf609b56a80c31ceb5a1031163660",
-    "widget/radio-widget.js": "d672b5027bf70ec6a2ccdf0200729e7d3d24368335d85e6af0d476feef93c378",
+    "widget/radio-widget.js": "9b1a03d013b40513b5331801965dedd8f6de3018380f018faa3f2b080bebc560",
     "js/radio-client.mjs": "9f3f46e94173d48e9440822ce9c121e217b79d785ab183133fb29fa68af2e666",
     "widget.html": "c92fef49b9da3e8a65bb4e21538e7864fd137914e41a177451eefe3acb51d5bb",
-    "test/radio-widget.test.mjs": "4ee578eb6258387e4f802ea64a3aed6fe0ffb5eeaf9df456617fa435cfe3ead5",
+    "test/radio-widget.test.mjs": "c0388d0e9be7a57d1cbced45374effb900b9e27f8685e76889dcb35ccce55725",
     "LICENSE": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30",
     "NOTICE": "032dda592e0c96a4f0db9f6f5044bfa0d3ddf29021d404f5159c319efae90786",
     "LICENSES/CC-BY-4.0.txt": "9ba9550ad48438d0836ddab3da480b3b69ffa0aac7b7878b5a0039e7ab429411"

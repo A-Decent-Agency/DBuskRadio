@@ -10,7 +10,7 @@ import { checkService } from '../scripts/check-service.mjs';
 test('release inventory verifies actual frozen bytes', async () => {
   const result = await verifyUpstream();
   assert.equal(result.files, 8);
-  assert.equal(result.commit, 'da5d998ee3c5fcd4a5a739afd35b5ca091f14e8b');
+  assert.equal(result.commit, '2c80b287730f0dd6496520b89fd76debaa6e6b9b');
 });
 
 test('product root mounts the actual widget and supporter workflows share an immutable kit pin', async () => {
