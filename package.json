@@ -1,0 +1,10 @@
+{
+  "name": "@decent-agency/dbusk-radio",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "node --test test/*.test.mjs",
+    "verify": "node scripts/verify-upstream.mjs",
+    "check:service": "node scripts/check-service.mjs"
+  }
+}
