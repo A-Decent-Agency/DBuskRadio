@@ -37,6 +37,11 @@ needed. Supporter editions are separate from listening and anonymous voting.
 HTTPS is required outside loopback development. External stations keep their own
 stream/CORS/codec availability; the widget cannot guarantee third-party uptime.
 There are no keys, credentials, build steps or wallet connections in this path.
+Media is decoded by the browser, not transcoded by this widget. Native codec
+support is required: MP3 playback was verified in the integrated browser, while
+that runtime rejected a valid AAC/M4A even in an independent, fully downloaded
+audio element. Do not interpret a successful byte-range probe or
+`canPlayType()` result as proof of decoding every recording on every browser.
 
 ## B. Operate your own broadcast
 
