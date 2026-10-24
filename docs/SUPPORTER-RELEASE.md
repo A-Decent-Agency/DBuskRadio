@@ -10,6 +10,22 @@ The release version, final product commit, source archive CID, actual product
 front, provenance back, rotatable HTML and metadata CID must be frozen together.
 Do not reuse another product's artwork or invent an IPFS URI.
 
+## Preparation pipeline
+
+The two supporter workflows reuse the product kit at immutable DecentHead
+commit `3b2a72f7f8c49fb2af89ea7df2ead8e338e0e870`. The root site mounts the
+real widget for its front screenshot. Set repository secret `PINATA_JWT` through
+GitHub settings, variable `SUPPORTER_ENS_NAME=dbusk.decentagency.eth`, and keep
+`SUPPORTER_DISCORD_ENABLED=false` until minted/listed evidence, ENS resolution
+and the announcement destination have been verified. No signing key belongs in CI.
+
+After reviewing tests and root-site rendering, publish an exact-commit version
+release. Its preparation workflow pins the runnable site, deterministic source
+archive, actual-product front, provenance back, self-contained rotatable HTML
+and metadata, freezes `supporter-release.json`, and opens the mint checklist.
+Inspect every asset and the manifest before signing. Failed preparation is not
+a mint; never invent or substitute missing CIDs.
+
 The requested Agency treasury resolves on Ethereum mainnet to
 `0xcAeEd8422fB5682C298B7F0971906d446fFd4e7a` (observed at block 26262074).
 Re-resolve and review that address in the signing wallet before any grant/mint.

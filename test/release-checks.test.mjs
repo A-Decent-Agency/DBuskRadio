@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { mkdtemp, writeFile, mkdir, rm } from 'node:fs/promises';
+import { mkdtemp, readFile, writeFile, mkdir, rm } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { createHash } from 'node:crypto';
@@ -11,6 +11,20 @@ test('release inventory verifies actual frozen bytes', async () => {
   const result = await verifyUpstream();
   assert.equal(result.files, 8);
   assert.equal(result.commit, 'da5d998ee3c5fcd4a5a739afd35b5ca091f14e8b');
+});
+
+test('product root mounts the actual widget and supporter workflows share an immutable kit pin', async () => {
+  const root = await readFile(new URL('../index.html', import.meta.url), 'utf8');
+  assert.match(root, /import \{ mount \} from '\.\/widget\.js'/);
+  assert.match(root, /radio\.destroy\(\)/);
+  const pin = '3b2a72f7f8c49fb2af89ea7df2ead8e338e0e870';
+  for (const name of ['release', 'announce']) {
+    const workflow = await readFile(new URL(`../.github/workflows/supporter-${name}.yml`, import.meta.url), 'utf8');
+    assert.match(workflow, new RegExp(`uses: TheJollyLaMa/DecentHead/.github/workflows/product-supporter-\\w+\\.yml@${pin}`));
+    assert.match(workflow, new RegExp(`head_ref: ${pin}`));
+    assert.doesNotMatch(workflow, /PRIVATE_KEY/);
+    if (name === 'announce') assert.match(workflow, /SUPPORTER_DISCORD_ENABLED == 'true'/);
+  }
 });
 
 test('release inventory rejects altered bytes and paths outside the product', async t => {

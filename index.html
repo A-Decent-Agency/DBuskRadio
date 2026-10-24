@@ -1,0 +1,22 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>DBusk Radio</title>
+</head>
+<body>
+  <h1>DBusk.decentagency.eth</h1>
+  <p>Standalone radio. Press Play to listen; no wallet required.</p>
+  <div id="radio"></div>
+  <p><a href="https://github.com/A-Decent-Agency/DBuskRadio">Source, embedding and independent-station instructions</a></p>
+  <script type="module">
+    import { mount } from './widget.js';
+    const radio = mount(document.getElementById('radio'), {
+      volume: 0.08,
+      stations: [{ id: 'wqxr', label: 'WQXR', url: 'https://stream.wqxr.org/wqxr-web' }],
+    });
+    window.addEventListener('pagehide', () => radio.destroy(), { once: true });
+  </script>
+</body>
+</html>
