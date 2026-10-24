@@ -46,13 +46,32 @@ export async function checkService({ workerUrl, origin, fetchImpl = fetch }) {
   const mediaUrl = radioMediaUrl(radioUrl, state.nowPlaying.ipfsCid);
   if (!mediaUrl) throw new Error('Current radio recording has no valid media CID');
   const media = await request(mediaUrl, { headers: { origin, range: 'bytes=0-1023' } });
+  let reader;
   try {
     cors(media);
-    if (media.status !== 206 || !/^bytes 0-\d+\/\d+$/.test(media.headers.get('content-range') || '')) {
+    const range = /^bytes 0-(\d+)\/(\d+)$/.exec(media.headers.get('content-range') || '');
+    const end = Number(range?.[1]), total = Number(range?.[2]);
+    if (media.status !== 206 || !Number.isSafeInteger(total) || total < 1 || end !== Math.min(1023, total - 1)) {
       throw new Error(`Media byte-range check failed (HTTP ${media.status})`);
     }
+    if (!/^(audio\/|video\/|application\/ogg(?:;|$))/i.test(media.headers.get('content-type') || '')) {
+      throw new Error('Media range is not served with an audio/video content type');
+    }
+    if (!media.body) throw new Error('Media range has no response body');
+    reader = media.body.getReader();
+    let size = 0;
+    while (true) {
+      const { value, done } = await reader.read();
+      if (done) break;
+      size += value.byteLength;
+      if (size > end + 1) throw new Error('Media range exceeds requested byte count');
+    }
+    if (size !== end + 1) throw new Error('Media range body is truncated');
   } finally {
-    await media.body?.cancel();
+    if (reader) {
+      await reader.cancel();
+      reader.releaseLock();
+    } else await media.body?.cancel();
   }
   return { origin, workerUrl, playId: state.nowPlaying.playId, checks: ['vote preflight', 'radio state', 'weekly history', 'media byte ranges'], voteSubmitted: false };
 }

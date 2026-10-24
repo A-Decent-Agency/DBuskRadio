@@ -48,7 +48,8 @@ test('release inventory rejects altered bytes and paths outside the product', as
   await assert.rejects(verifyUpstream(root), /Invalid inventory path/);
 });
 
-function service({ preflightOrigin = 'https://host.example', ready = true, rangeStatus = 206, history = true } = {}) {
+function service({ preflightOrigin = 'https://host.example', ready = true, rangeStatus = 206, history = true,
+  range = 'bytes 0-1023/5000', size = 1024, type = 'audio/mpeg' } = {}) {
   const calls = [];
   const origin = 'https://host.example';
   const fetchImpl = async (url, options) => {
@@ -59,8 +60,8 @@ function service({ preflightOrigin = 'https://host.example', ready = true, range
       headers: { 'access-control-allow-origin': preflightOrigin, 'access-control-allow-methods': 'GET, POST, OPTIONS', 'access-control-allow-headers': 'content-type, range' },
     });
     const headers = { 'access-control-allow-origin': '*' };
-    if (url.includes('/media?')) return new Response('some audio', {
-      status: rangeStatus, headers: { ...headers, 'content-range': 'bytes 0-1023/5000' },
+    if (url.includes('/media?')) return new Response(new Uint8Array(size), {
+      status: rangeStatus, headers: { ...headers, 'content-range': range, 'content-type': type },
     });
     if (url.includes('/history?')) return Response.json({ weeks: history ? [{ current: true, tracks: [] }] : [] }, { headers });
     return Response.json({
@@ -84,6 +85,14 @@ test('service check fails closed on wildcard write origin, idle radio, missing h
   await assert.rejects(checkService(service({ ready: false }).options), /not currently playing/);
   await assert.rejects(checkService(service({ history: false }).options), /weekly vote history/);
   await assert.rejects(checkService(service({ rangeStatus: 200 }).options), /byte-range check failed/);
+});
+
+test('media probe rejects malformed ranges, error bodies, truncation and excess bytes', async () => {
+  await assert.rejects(checkService(service({ range: 'bytes 0-2047/5000' }).options), /byte-range check failed/);
+  await assert.rejects(checkService(service({ type: 'application/json' }).options), /content type/);
+  await assert.rejects(checkService(service({ size: 100 }).options), /truncated/);
+  await assert.rejects(checkService(service({ size: 2048 }).options), /exceeds requested/);
+  assert.equal((await checkService(service({ range: 'bytes 0-7/8', size: 8 }).options)).voteSubmitted, false);
 });
 
 test('service check rejects insecure and credential-bearing deployment inputs before fetching', async () => {
