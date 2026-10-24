@@ -1,0 +1,18 @@
+{
+  "repository": "https://github.com/TheJollyLaMa/DecentBusking",
+  "baseCommit": "045c625",
+  "freezeCommit": "6c1207ca451a6d908b18cba64d020ec1e90a9760",
+  "branch": "feat/standalone-dbusk-radio",
+  "issue": "https://github.com/TheJollyLaMa/DecentBusking/issues/247",
+  "status": "Unmerged upstream PR snapshot, not a tagged release",
+  "files": [
+    "widget.js",
+    "widget/radio-widget.js",
+    "js/radio-client.mjs",
+    "widget.html",
+    "test/radio-widget.test.mjs",
+    "LICENSE",
+    "NOTICE",
+    "LICENSES/CC-BY-4.0.txt"
+  ]
+}
