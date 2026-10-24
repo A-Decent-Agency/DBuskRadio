@@ -4,15 +4,57 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <title>DBusk Radio</title>
+  <meta name="description" content="Community radio, listener votes, and a player you can make your own.">
+  <style>
+    :root { color-scheme: dark; font-family: system-ui, sans-serif; background: #070f15; color: #ecfff8; }
+    * { box-sizing: border-box; }
+    body { margin: 0; min-height: 100svh; padding: clamp(20px, 5vw, 64px); background: radial-gradient(ellipse at 15% 20%, #163f38 0, transparent 55%), radial-gradient(ellipse at 90% 85%, #252044 0, transparent 55%); }
+    main { width: min(100%, 920px); margin: auto; }
+    .identity, .eyebrow, .features { font: 600 12px/1.6 ui-monospace, monospace; letter-spacing: .1em; text-transform: uppercase; }
+    .identity { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 12px; color: #a5c9bd; margin-bottom: 32px; }
+    .identity span:first-child { color: #9fffd5; }
+    .stage { border: 1px solid #4c8c7b; border-radius: 24px; padding: clamp(24px, 5vw, 52px); background: linear-gradient(135deg, #102b28ee, #101727ee); box-shadow: 0 0 48px #62ffc41a; }
+    .eyebrow { color: #b7a8ff; margin: 0 0 16px; }
+    h1 { font-size: clamp(44px, 8vw, 80px); line-height: 1; letter-spacing: -.055em; margin: 0; }
+    .intro { max-width: 520px; color: #bed7cf; line-height: 1.7; font-size: 17px; margin: 24px 0; }
+    .signal { width: 100%; height: 64px; color: #8bf9cf; margin: 8px 0 24px; opacity: .7; }
+    #radio { --dbusk-color: #ecfff8; --dbusk-background: #091b1b; --dbusk-border: #548e80; --dbusk-accent: #a0ffda; --dbusk-radius: 14px; --dbusk-padding: 20px; --dbusk-gap: 10px; --dbusk-max-width: 100%; }
+    #radio::part(controls) { gap: 12px; }
+    #radio::part(play) { min-width: 44px; min-height: 44px; background: #a0ffda; color: #09211b; border: 0; font-size: 19px; }
+    #radio::part(up), #radio::part(down) { min-width: 44px; min-height: 44px; }
+    #radio::part(now) { font-size: 16px; padding: 14px 0; }
+    #radio::part(settings) { margin-top: 12px; }
+    .features { display: flex; flex-wrap: wrap; gap: 8px 24px; padding: 0; margin: 24px 0 0; list-style: none; color: #a5c9bd; }
+    .features li::before { content: "+"; color: #a0ffda; margin-right: 8px; }
+    footer { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 16px; margin: 24px 0 0; font-size: 13px; color: #a5c9bd; line-height: 1.7; }
+    footer p { margin: 0; max-width: 470px; }
+    a { color: #a0ffda; text-underline-offset: 4px; }
+    a:focus-visible { outline: 2px solid #b7a8ff; outline-offset: 5px; }
+    @media (max-width: 480px) { .identity { margin-bottom: 20px; } #radio { --dbusk-padding: 12px; } }
+  </style>
 </head>
 <body>
-  <h1>DBusk.decentagency.eth</h1>
-  <p>Standalone radio. Press Play to listen; no wallet required.</p>
-  <div id="radio"></div>
-  <p><a href="https://github.com/A-Decent-Agency/DBuskRadio">Source, embedding and independent-station instructions</a></p>
+  <main>
+    <header class="identity"><span>DBusk.decentagency.eth</span><span>A Decent Agency / Community radio</span></header>
+    <section class="stage" aria-labelledby="title">
+      <p class="eyebrow">Independent sound. Shared signal.</p>
+      <h1 id="title">DBusk Radio</h1>
+      <p class="intro">Tune into the community. Give the current track a thumbs up or down. Take the player home and make it yours.</p>
+      <svg class="signal" viewBox="0 0 800 64" preserveAspectRatio="none" aria-hidden="true">
+        <path d="M0 32 H80 L88 22 L96 42 L104 12 L112 52 L120 24 L128 40 L136 32 H240 L248 18 L256 46 L264 6 L272 58 L280 16 L288 48 L296 24 L304 40 L312 32 H440 L448 22 L456 42 L464 10 L472 54 L480 20 L488 44 L496 32 H620 L628 18 L636 46 L644 4 L652 60 L660 14 L668 50 L676 24 L684 40 L692 32 H800" fill="none" stroke="currentColor" stroke-width="2" vector-effect="non-scaling-stroke"/>
+      </svg>
+      <div id="radio"></div>
+      <ul class="features"><li>No wallet to listen</li><li>Listener votes</li><li>Your site, your style</li></ul>
+    </section>
+    <footer>
+      <p>Press Play to start audio. Votes are available for playable DBusk tracks while listening. The signal above is decorative, not a live audio meter.</p>
+      <a href="https://github.com/A-Decent-Agency/DBuskRadio">Get the player &amp; deployment guide</a>
+    </footer>
+  </main>
   <script type="module">
     import { mount } from './widget.js';
     const radio = mount(document.getElementById('radio'), {
+      theme: 'dark',
       volume: 0.08,
       stations: [{ id: 'wqxr', label: 'WQXR', url: 'https://stream.wqxr.org/wqxr-web' }],
     });

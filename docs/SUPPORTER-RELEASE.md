@@ -26,30 +26,40 @@ and metadata, freezes `supporter-release.json`, and opens the mint checklist.
 Inspect every asset and the manifest before signing. Failed preparation is not
 a mint; never invent or substitute missing CIDs.
 
-The requested Agency treasury resolves on Ethereum mainnet to
-`0xcAeEd8422fB5682C298B7F0971906d446fFd4e7a` (observed at block 26262074).
-Re-resolve and review that address in the signing wallet before any grant/mint.
-The steward requested adding it as an NFT admin; it was **not** an admin at Base
-block 53025207. An unsigned role-grant plan is not proof of authority.
+## Current release and wallet split
+
+The [v0.1.0 release](https://github.com/A-Decent-Agency/DBuskRadio/releases/tag/v0.1.0)
+and its pinned preparation assets are frozen. The steward requested improving
+the product front before minting: publish a new reviewed version, never replace
+the v0.1.0 assets. The root now supplies a styled, responsive host shell through
+CSS variables and shadow parts. The widget defaults, minimal `widget.html`
+example and Canopy's original compact appearance are unchanged.
+
+The steward corrected the earlier Agency-admin/recipient plan:
+**thejollylama.eth**, `0x807061DF657A7697c04045dA7d16D941861cAABc`, handles
+supporter registration/minting, initial editions and royalties.
+**decentagency.eth**, `0xcAeEd8422fB5682C298B7F0971906d446fFd4e7a`, controls
+the widget ENS subnames on Ethereum only. The proposed Agency NFT-admin grant
+is **withdrawn**; do not sign it. Recheck personal NFT admin authority and both
+ENS identities before their respective wallet signatures.
 
 ## Transactions, only after independent wallet approval
 
-1. Existing NFT admin grants `DEFAULT_ADMIN_ROLE` to the Agency wallet on the
-   approved Base NFT `0xe63EC9f8228720bAAC2fD528C0A6d06B3Dc5439B`. Keep the
-   current admin; no ownership transfer/revocation is part of this request.
-   Verify `hasRole` after confirmation before changing the signing account.
-2. Agency admin registers Product kind `0` with max supply `1000`, the actual
-   pinned metadata URI, Agency royalty receiver and `1000` royalty bps.
+1. Verify that the personal wallet remains an admin of the approved Base NFT
+   `0xe63EC9f8228720bAAC2fD528C0A6d06B3Dc5439B`. No role grant, revocation or
+   ownership transfer is needed for the corrected plan.
+2. Personal admin registers Product kind `0` with max supply `1000`, the actual
+   reviewed-version pinned metadata URI, personal royalty receiver and `1000` bps.
    Read the actual emitted token ID; don't predict the next ID.
-3. Agency admin calls `mintProduct(agencyAddress, tokenId, 1000)` and verifies
+3. Personal admin calls `mintProduct(personalAddress, tokenId, 1000)` and verifies
    the receipt, URI, supply, balance and `royaltyInfo`.
 4. **Primary sale route still needs explicit confirmation.** The existing
    community escrow `0x31b07b83e99A9bdF379bf40225b8A80d3804C89d` retains
-   purchase USDC. It does not automatically send sales to the Agency wallet.
-   An Agency royalty receiver or NFT admin grant does not change this routing.
+   purchase USDC. It does not automatically forward sales to the minting wallet.
+   A royalty receiver or NFT admin role does not change this routing.
    Its current owner is the personal wallet
    `0x807061DF657A7697c04045dA7d16D941861cAABc`, not the Agency wallet.
-5. If the steward approves that community route, the Agency holder transfers
+5. If the steward approves that community route, the personal holder transfers
    1,000 editions with `safeTransferFrom` to escrow and its current owner calls
    `listDNFT(nft, tokenId, 0, BaseUSDC, 10000000, 1000, note)`.
    Do not transfer stock until the sale route is approved.

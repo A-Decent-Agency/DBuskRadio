@@ -17,6 +17,11 @@ test('product root mounts the actual widget and supporter workflows share an imm
   const root = await readFile(new URL('../index.html', import.meta.url), 'utf8');
   assert.match(root, /import \{ mount \} from '\.\/widget\.js'/);
   assert.match(root, /radio\.destroy\(\)/);
+  assert.match(root, /theme: 'dark'/);
+  assert.match(root, /#radio::part\(play\)/);
+  assert.match(root, /<svg[^>]+aria-hidden="true"/);
+  assert.match(root, /decorative, not a live audio meter/);
+  assert.doesNotMatch(root, /autoplay|\.play\(\)/);
   const pin = '3b2a72f7f8c49fb2af89ea7df2ead8e338e0e870';
   for (const name of ['release', 'announce']) {
     const workflow = await readFile(new URL(`../.github/workflows/supporter-${name}.yml`, import.meta.url), 'utf8');

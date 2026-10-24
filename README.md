@@ -22,7 +22,11 @@ python3 -m http.server 8080
 The default branch contains the merged product. For production, check out an
 actual reviewed release tag or full commit rather than tracking a moving branch.
 
-Open `http://localhost:8080/widget.html`. Static HTTP is necessary for ES modules;
+Open `http://localhost:8080/` for the styled product demo, or
+`http://localhost:8080/widget.html` for the minimal embedding example.
+The styled root uses only host CSS variables and shadow parts; the reusable
+widget and Canopy's original compact renderer are unchanged.
+Static HTTP is necessary for ES modules;
 `file:` pages are not supported. A network/CORS error is reported, not silently
 replaced with mock music. Local playback can use public reads; local **votes**
 require the operator to allow the exact local origin in the radio worker.
@@ -179,8 +183,11 @@ Every relative module must remain within the same immutable commit.
    pin is retrievable; test live audio/codec, actual CORS, next-track handoff and tallies
    on a dedicated browser page. Synthetic tests do not establish live delivery.
 5. Supporter terms are approved: 1,000 editions at 10 USDC, 10% secondary
-   royalty, with the Agency as intended mint/royalty recipient. Authority,
-   actual pins, primary-sale routing and wallet signatures remain gates.
+   royalty, with the personal `thejollylama.eth` wallet handling supporter
+   registration/minting, initial editions and royalties. The Agency wallet is
+   for ENS only; the proposed Agency NFT-admin grant is withdrawn. The v0.1.0
+   assets are frozen, while the improved product front requires a new release.
+   Artwork review, primary-sale routing and wallet signatures remain gates.
    Display ENS is `DBusk.decentagency.eth`; no contenthash/CID is invented here.
    No supporter has been minted, listed, transferred or charged, and no ENS
    write or supporter announcement has been performed.
