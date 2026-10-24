@@ -67,8 +67,8 @@ DBusk uses the same `GET /api/radio`, `GET /api/radio/history`,
 `GET /api/radio/media?cid=…` and `POST /api/radio/vote` protocol as the source
 website. Browser listener ID and the latest 100 per-play choices use the same
 `decentbusking:listener:v1` and `decentbusking:votes:v1:<radio-url>` keys.
-Storage is origin-scoped; cross-origin duplicates are enforced by the worker,
-not a shared browser cookie. No wallet is sent to this anonymous endpoint.
+Storage is origin-scoped; the worker rejects repeated voter-ID/play pairs,
+not repeated people across origins. No wallet is sent to this anonymous endpoint.
 Votes use optimistic feedback and roll back on errors; successful votes refresh
 the real weekly/ad tallies. Voting is disabled while paused, offline, between
 tracks, on invalid media, or on external stations. Network/CORS, cooldown,
@@ -87,6 +87,17 @@ signed/admin/upload permissions. Defaults cover:
 IPFS subdomain gateways and other ENS gateways require their actual exact
 origin to be added by an operator; no arbitrary wildcard or `null` origin.
 No worker configuration has been applied or service restarted by this PR.
+
+The vote preflight advertises `GET, POST, OPTIONS` and headers
+`content-type, range`; the actual write route is `POST /api/radio/vote`.
+No credentialed CORS header is added. Missing, `null`, and unlisted Origin
+headers are rejected by that worker route, but **Origin/CORS is not
+authentication**: a non-browser client can forge an allowed Origin and a new
+anonymous voter ID. Current API enforcement validates the vote/ID shape,
+requires an audible current play, deduplicates the ID per play, and caps the
+per-play ID map at 5,000. It is not wallet-bound or a per-person rate limit.
+Abuse protection/authentication/rate-limit changes require a separately reviewed
+server policy; this widget does not pretend browser storage provides it.
 
 ## Provenance and updating
 
