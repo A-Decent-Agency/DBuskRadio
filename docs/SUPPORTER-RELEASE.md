@@ -1,5 +1,13 @@
 # DBusk supporter release
 
+## Published evidence supersedes the historical checklist
+
+The v0.2.0 release now has public ENS, mint and listing receipts: token **74**,
+listing **4**. See [clone, adapt and support](CLONE_AND_ADAPT.md) for the exact
+release source and dated snapshots. Do not register or mint a duplicate.
+The preparation narrative below is retained as historical guidance; its
+unminted/unlisted and unconfirmed-routing statements are not current status.
+
 Approved preparation: 100 Base ERC-1155 product editions, 10 native Base USDC
 per edition, 1,000 bps (10%) secondary royalty. No ownership or financial return
 is promised; code remains Apache-2.0 with upstream notices.

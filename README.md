@@ -4,6 +4,10 @@
 from [DecentBusking #247](https://github.com/TheJollyLaMa/DecentBusking/issues/247).
 No bundler, dependencies, iframe, wallet connection or automatic playback.
 
+Published v0.2.0 evidence records ENS contenthash, 100 minted supporter editions
+(token 74) and listing 4. See [clone, adapt and support](docs/CLONE_AND_ADAPT.md)
+for dated receipts and integration boundaries; recheck current stock and resolution.
+
 See [deployment paths](docs/DEPLOYMENT.md) for hosted-service onboarding,
 independent worker setup and the non-writing service check, and
 [supporter release](docs/SUPPORTER-RELEASE.md) for the approved terms and
@@ -156,7 +160,7 @@ server policy; this widget does not pretend browser storage provides it.
 `upstream.json` freezes **DecentBusking
 `948289670ed43678ea0dcaeafd8ea487bd78a2b0`**, including preloaded playlist handoffs and continuous between-track polling, based on main
 `045c625f90930263c3f14ca26b520634fe7d76cc`.
-This is a merged source snapshot, not a tagged product release. The runtime modules,
+This merged source snapshot is used by published v0.2.0. The runtime modules,
 demo and widget tests are byte-identical to that commit. Upstream
 `js/radio-sync.js` uses the same `radio-client.mjs` transport, listener identity
 and media URL helpers, avoiding an independent fork of the client protocol.
@@ -170,7 +174,11 @@ static CDN URL, e.g. the Canopy adapter committed alongside this work. Do not
 replace it with `@main`, an uncreated tag, or a raw GitHub HTML/text response.
 Every relative module must remain within the same immutable commit.
 
-## Production and unsigned release gates
+## Historical preparation gates and new-deployment checks
+
+The original preparation checklist below predates the published mint/listing
+evidence linked above; its unsigned-state statements are historical, not current
+token or ENS status. New deployments still require their own service checks.
 
 1. The upstream extraction, radio-only CORS and per-recording handoff fix are
    merged; the runtime freeze above records their exact source.
