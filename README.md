@@ -161,7 +161,10 @@ server policy; this widget does not pretend browser storage provides it.
 `948289670ed43678ea0dcaeafd8ea487bd78a2b0`**, including preloaded playlist handoffs and continuous between-track polling, based on main
 `045c625f90930263c3f14ca26b520634fe7d76cc`.
 This merged source snapshot is used by published v0.2.0. The runtime modules,
-demo and widget tests are byte-identical to that commit. Upstream
+demo (archived at `upstream/widget.html`) and widget tests are byte-identical
+to that commit. `upstream.json` maps that source path without replacing its
+original checksum; the public `widget.html` adds only crawler metadata and an
+explicit HTML head. Serve the public example, not the archived source copy. Upstream
 `js/radio-sync.js` uses the same `radio-client.mjs` transport, listener identity
 and media URL helpers, avoiding an independent fork of the client protocol.
 Its archive, fade, buffering and Discord takeover player remains separate and
@@ -202,3 +205,14 @@ token or ENS status. New deployments still require their own service checks.
 
 Code: Apache-2.0. Upstream notices and CC-BY-4.0 license for original non-code
 content are preserved in `NOTICE`, `LICENSE`, and `LICENSES/`.
+
+
+## Link previews
+
+Public entry pages include static Open Graph and Twitter large-image metadata,
+with an absolute HTTPS image URL. The 1200 x 630 JPEG at
+`assets/social-preview.jpg` previews this public website without a connected wallet.
+Keep the image in the deployed artifact when changing the build. After updating
+it, check the raw HTML and image response as a crawler; Discord and other services
+may cache earlier previews. ENS/IPFS snapshots need a separate site publication;
+metadata alone does not update an existing immutable snapshot.
