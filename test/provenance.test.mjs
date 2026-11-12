@@ -9,7 +9,7 @@ test('complete frozen upstream inventory matches its SHA-256 manifest', () => {
   assert.match(provenance.freezeCommit, /^[0-9a-f]{40}$/);
   assert.deepEqual(Object.keys(provenance.sha256).sort(), [...provenance.files].sort());
   for (const file of provenance.files) {
-    const digest = createHash('sha256').update(readFileSync(new URL(file, root))).digest('hex');
+    const digest = createHash('sha256').update(readFileSync(new URL(provenance.sourceFiles?.[file] || file, root))).digest('hex');
     assert.equal(digest, provenance.sha256[file], file);
   }
 });

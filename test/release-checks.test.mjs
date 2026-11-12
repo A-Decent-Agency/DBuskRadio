@@ -52,6 +52,11 @@ test('release inventory rejects altered bytes and paths outside the product', as
   lock.sha256 = { '../outside.js': 'b'.repeat(64) };
   await save();
   await assert.rejects(verifyUpstream(root), /Invalid inventory path/);
+  lock.files = ['widget/entry.js'];
+  lock.sha256 = { 'widget/entry.js': 'b'.repeat(64) };
+  lock.sourceFiles = { 'widget/entry.js': '../outside.js' };
+  await save();
+  await assert.rejects(verifyUpstream(root), /Invalid inventory path/);
 });
 
 function service({ preflightOrigin = 'https://host.example', ready = true, rangeStatus = 206, history = true,

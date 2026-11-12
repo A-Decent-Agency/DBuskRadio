@@ -12,7 +12,7 @@ export async function verifyUpstream(root = fileURLToPath(new URL('../', import.
   if (Object.keys(lock.sha256 || {}).length !== lock.files.length) throw new Error('Hash inventory differs from file inventory');
   for (const name of lock.files) {
     if (typeof name !== 'string') throw new Error('Invalid inventory path');
-    const file = resolve(root, name);
+    const file = resolve(root, lock.sourceFiles?.[name] || name);
     const path = relative(root, file);
     if (!path || path.startsWith('..') || isAbsolute(path)) throw new Error(`Invalid inventory path: ${name}`);
     const actual = createHash('sha256').update(await readFile(file)).digest('hex');
