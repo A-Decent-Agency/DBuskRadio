@@ -202,3 +202,14 @@ token or ENS status. New deployments still require their own service checks.
 
 Code: Apache-2.0. Upstream notices and CC-BY-4.0 license for original non-code
 content are preserved in `NOTICE`, `LICENSE`, and `LICENSES/`.
+
+
+## Link previews
+
+Public entry pages include static Open Graph and Twitter large-image metadata,
+with an absolute HTTPS image URL. The 1200 x 630 JPEG at
+`assets/social-preview.jpg` previews this public website without a connected wallet.
+Keep the image in the deployed artifact when changing the build. After updating
+it, check the raw HTML and image response as a crawler; Discord and other services
+may cache earlier previews. ENS/IPFS snapshots need a separate site publication;
+metadata alone does not update an existing immutable snapshot.
